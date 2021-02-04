@@ -19,5 +19,7 @@ class Match(models.Model):
     loosers = models.ManyToManyField(Player, related_name='lost_matches', blank=True)
     
     def __str__(self):
-        return " vs. ".join([player.name for player in self.players.all()])
+        if not self.finished:
+            return " vs. ".join([player.name for player in self.players.all()])
+        return r'<span style="color:green;">{}</span> vs. <span style="color:red;">{}</span>'.format(" & ".join([player.name for player in self.winners.all()]), " & ".join([player.name for player in self.loosers.all()]))
 
