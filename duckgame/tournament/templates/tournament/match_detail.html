@@ -47,8 +47,19 @@
                     </p>
                 </div>
                 <div class="col">
-                    <h4>{% if match.finished %}<br>Zápas byl ukončen<br>{% else %}<br>Zápas ještě nebyl ukončen<br>{% endif %}</h4>
-                    <p>Plánovaný start<br>{{ match.play_date }}</p>
+                    {% if match.finished %}
+                        <h5>Zápas byl ukončen</h5><br>
+                        <p> Vítěz:
+                        {% for pl in match.winners.all %}
+                            <br> <a href="{% url 'tournament:player_detail' pl.id %}">{{ pl }}</a>
+                        {% endfor %}
+                            <br>
+                            Zápas byl odehrán<br>
+                            {{ match.play_date }}</p>
+                    {% else %}
+                        <h5>Zápas ještě nebyl ukončen</h5><br>
+                        <p>Plánovaný start<br>{{ match.play_date }}</p>
+                    {% endif %}
                 </div>
             </div>
         </div>

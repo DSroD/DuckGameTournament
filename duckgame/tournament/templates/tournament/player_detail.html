@@ -46,8 +46,8 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td class="text-center">{{ player.wins }}</td>
-                                    <td class="text-center">{{ player.looses }}<br></td>
+                                    <td class="text-center">{{ player.won_matches.all|length }}</td>
+                                    <td class="text-center">{{ player.lost_matches.all|length }}<br></td>
                                     <td class="text-center">{{ player.total_points }}<br></td>
                                 </tr>
                                 <tr></tr>
