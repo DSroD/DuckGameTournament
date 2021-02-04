@@ -18,7 +18,14 @@
                 <ul class="nav navbar-nav mr-auto">
                     <li class="nav-item"><a class="nav-link active" href="#">Zápasy</a></li>
                     <li class="nav-item"><a class="nav-link" href="{% url 'tournament:rules' %}">Pravidla</a></li>
-                </ul><span class="navbar-text actions"> <a class="login" href="#">Log In</a><a class="btn btn-light action-button" role="button" href="#">Sign Up</a></span>
+                </ul>
+
+                {% if not logged_user %}
+                    <span class="navbar-text actions"> <a class="login" href="{% url 'tournament:login' %}">Log In</a><a class="btn btn-light action-button" role="button" href="{% url 'tournament:register' %}">Sign Up</a></span>
+                {% else %}
+                    <span class="navbar-text actions"> <a class="login" href="#">User Panel</a><a class="login" href="{% url 'tournament:logout' %}">Log Out</a></span>
+                {% endif %}
+
             </div>
         </div>
     </nav>
@@ -59,7 +66,7 @@
                         {% if recently_played %}
                             {% for match in recently_played %}
                                 <tr>
-                                    <td class="text-center"><a class="text-info" style="font-size: 18px;" href="{% url 'match_detail' match.id %}">{{ match }}</a></td>
+                                    <td class="text-center"><a class="text-info" style="font-size: 18px;" href="{% url 'tournament:match_detail' match.id %}">{{ match }}</a></td>
                                 </tr>
                             {% endfor %}
                         {% else %}

@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, authenticate, logout
 
 from django.http import Http404
 
@@ -46,26 +46,26 @@ def register(request):
             raw_password = form.cleaned_data.get('password1')
             user = authenticate(username=username, password=raw_password)
             login(request, user)
-            return redirect('index')
+            return redirect('tournament:index')
         else:
             regwrong = True
     if(request.user.is_authenticated):
-        return redirect('index')
+        return redirect('tournament:index')
     return render(request, 'tournament/register.html', {'regwrong': regwrong})
 
-def login(request):
+def login_view(request):
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
-        user = authenticate(username, password)
+        user = authenticate(username=username, password=password)
         if user is not None:
             login(request, user)
-            redirect('index')
+            return redirect('tournament:index')
     if(request.user.is_authenticated):
-        return redirect('index')
+        return redirect('tournament:index')
     return render(request, 'tournament/login.html')
 
-def logout(request):
+def logout_view(request):
     if(request.user.is_authenticated):
         logout(request)
-    return redirect('index')
+    return redirect('tournament:index')

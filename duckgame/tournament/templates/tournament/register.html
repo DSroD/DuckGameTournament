@@ -21,8 +21,8 @@
                     <li class="nav-item"></li>
                 </ul>
 
-                {% if !logged_user %}
-                    <span class="navbar-text actions"> <a class="login" href="#">Log In</a><a class="btn btn-light action-button" role="button" href="#">Sign Up</a></span>
+                {% if not logged_user %}
+                    <span class="navbar-text actions"> <a class="login" href="{% url 'tournament:login' %}">Log In</a><a class="btn btn-light action-button" role="button" href="{% url 'tournament:register' %}">Sign Up</a></span>
                 {% else %}
                     <span class="navbar-text actions"> <a class="login" href="#">User Panel</a><a class="login" href="{% url 'tournament:logout' %}">Log Out</a></span>
                 {% endif %}
@@ -34,7 +34,7 @@
         <div class="col">
             <form style="padding: 24px;margin: 2px;" method="post">
             {% csrf_token %}
-            <input class="form-control" type="text" name="username" placeholder="Username" style="margin: 4px;"><input class="form-control" type="password1" placeholder="Password" name="password" style="margin: 4px;"><input class="form-control" type="password1" placeholder="Password confirmation" name="password2" style="margin: 4px;"><input class="form-control" type="email" name="email" style="margin: 4px;" placeholder="E-mail"><button class="btn btn-primary" type="submit" style="margin: 4px;">Registrovat!</button></form>
+            <input class="form-control" type="text" name="username" placeholder="Username" style="margin: 4px;"><input class="form-control" type="password" placeholder="Password" name="password1" style="margin: 4px;"><input class="form-control" type="password" placeholder="Password confirmation" name="password2" style="margin: 4px;"><input class="form-control" type="email" name="email" style="margin: 4px;" placeholder="E-mail"><button class="btn btn-primary" type="submit" style="margin: 4px;">Registrovat!</button></form>
         </div>
         <div class="col">
             <h5>Registrace</h5>

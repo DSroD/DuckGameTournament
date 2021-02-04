@@ -19,7 +19,7 @@
                     <li class="nav-item"><a class="nav-link" href="{% url 'tournament:index' %}">Zápasy</a></li>
                     <li class="nav-item"><a class="nav-link" href="{% url 'tournament:rules' %}">Pravidla</a></li>
                     <li class="nav-item"></li>
-                </ul><span class="navbar-text actions"> <a class="login" href="#">Log In</a><a class="btn btn-info action-button" role="button" href="#">Sign Up</a></span>
+                </ul><span class="navbar-text actions"> <a class="login" href="{% url 'tournament:login' %}">Log In</a><a class="btn btn-light action-button" role="button" href="{% url 'tournament:register' %}">Sign Up</a></span>
             </div>
         </div>
     </nav>
