@@ -16,36 +16,46 @@
         <div class="container"><a class="navbar-brand" href="#">Duck Game turnájek</a><button data-toggle="collapse" class="navbar-toggler" data-target="#navcol-1"><span class="sr-only">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
             <div class="collapse navbar-collapse" id="navcol-1">
                 <ul class="nav navbar-nav mr-auto">
-                    <li class="nav-item"><a class="nav-link" href="{% url 'tournament:index' %}">Zápasy</a></li>
+                    <li class="nav-item"><a class="nav-link" style="color: rgb(0,0,0);" href="{% url 'tournament:index' %}">Zápasy</a></li>
                     <li class="nav-item"><a class="nav-link" href="{% url 'tournament:rules' %}">Pravidla</a></li>
                     <li class="nav-item"></li>
                 </ul>
 
-                {% if not logged_user %}
+                {% if not request.user.is_authenticated %}
                     <span class="navbar-text actions"> <a class="login" href="{% url 'tournament:login' %}">Log In</a><a class="btn btn-light action-button" role="button" href="{% url 'tournament:register' %}">Sign Up</a></span>
                 {% else %}
                     <span class="navbar-text actions"> <a class="login" href="{% url 'tournament:profile' %}">User Panel</a><a class="login" href="{% url 'tournament:logout' %}">Log Out</a></span>
                 {% endif %}
 
+
             </div>
         </div>
     </nav>
     <div class="row" style="margin: 5%;background: rgba(255,255,255,0.25);">
-        <div class="col">
-            <form style="padding: 24px;margin: 2px;" method="post">
-                {% csrf_token %}
-                <input class="form-control" type="text" name="username" placeholder="Username" required="" style="margin: 4px;"><input class="form-control" required="" type="password" placeholder="Password" name="password1" style="margin: 4px;"><input class="form-control" type="password" required="" placeholder="Password confirmation" name="password2" style="margin: 4px;"><input class="form-control" type="email" name="email" required="" style="margin: 4px;" placeholder="E-mail"><button class="btn btn-primary" type="submit" style="margin: 4px;">Registrovat!</button>
-            </form>
-        </div>
-        <div class="col">
-            <h5>Registrace</h5>
-            <p>Registrace týpečků.
-            {% if regwrong %}
-                <br>Tak hele, musíš tam zadat POŘÁDNÝ údaje!
-            {% else %}
-                <br>Doufám že to neporušuje GDPR nebo tak něco.
-            {% endif %}
-            </p>
+        <div class="col" style="filter: brightness(100%);margin: 0px;">
+            <div class="row">
+                <div class="col">
+                    <h5>Duck game account</h5>
+                    {% if not request.user.player %}
+                    <div>
+                        <p>K vašemu účtu není připojen žádný duck game account, vytvořte si jej prosím<br></p>
+                        <form class="d-inline-flex flex-grow-0" style="margin: 4px;" method="post">
+                            {% csrf_token %}
+                            <input class="form-control" type="text" name="game_nick" placeholder="Herní nick" required="" minlength="4" maxlength="16" style="margin: 4px;"><button class="btn btn-primary" type="submit" style="margin: 4px;">Vytvořit</button>
+                        </form>
+                    </div>
+                    {% else %}
+                        <div>
+                        <p>K vašemu účtu je připojený účet {{ request.user.player }}</p>
+                        <h6>Player info</h6>
+                            <form style="margin: 4px;" method="post">
+                                {% csrf_token %}
+                                <textarea class="form-control" style="margin: 4px;" name="profile_text">{{ request.user.player.player_info }}</textarea><button class="btn btn-primary" type="submit" style="margin: 4px;">Aktualizovat</button>
+                            </form>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
         </div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>

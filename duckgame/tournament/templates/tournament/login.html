@@ -27,7 +27,7 @@
         <div class="col">
             <form style="padding: 24px;margin: 2px;" method="post">
             {% csrf_token %}
-            <input class="form-control" type="text" name="username" placeholder="Username" style="margin: 4px;"><input class="form-control" type="password" placeholder="Password" name="password" style="margin: 4px;"><button class="btn btn-primary" type="submit" style="margin: 4px;">Přihlásit se</button></form>
+            <input class="form-control" type="text" name="username" placeholder="Username" required="" style="margin: 4px;"><input class="form-control" type="password" required="" placeholder="Password" name="password" style="margin: 4px;"><button class="btn btn-primary" type="submit" style="margin: 4px;">Přihlásit se</button></form>
         </div>
         <div class="col">
             <h5>Přihlášení</h5>
