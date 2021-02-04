@@ -17,7 +17,7 @@
             <div class="collapse navbar-collapse" id="navcol-1">
                 <ul class="nav navbar-nav mr-auto">
                     <li class="nav-item"><a class="nav-link" href="{% url 'tournament:index' %}">Zápasy</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="#">Pravidla</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'tournament:rules' %}">Pravidla</a></li>
                     <li class="nav-item"></li>
                 </ul>
 
@@ -31,29 +31,20 @@
         </div>
     </nav>
     <div class="row" style="margin: 5%;background: rgba(255,255,255,0.25);">
-        <div class="col" style="filter: brightness(100%);margin: 0px;">
-            <h3>Pravidla</h3>
-            <h5>Nastavení hry</h5>
-            <ul>
-                <li>30 bodů, intermission po 10ti kolech<br></li>
-                <li>NO wall mode<br></li>
-                <li>Mapy pouze originální ze seznamu, 0% náhodných levelů</li>
-                <li>Žádné modifiery<br></li>
-            </ul>
-            <h5>Technická pravidla</h5>
-            <ul>
-                <li>Pokud některý zúčastněný potřebuje restartovat PC/hru, musí to ohlásit minimálně 1 mapu dopředu<br></li>
-                <li>Problémy s internetem se neberou v potaz<br></li>
-                <li>Je možné mít maximálně 6 spectatorů, ostatní se musí dívat na stream, pokud ho někdo zapne.<br></li>
-                <li>Poskytovatelé streamů mají přednost pro spectator sloty</li>
-                <li>Je doporučeno používat jenom originál HATs. S Custom hat a případným výpadkem internetu (či jiné formy disrupce) by se mohly zresetovat body<br></li>
-                <li>Do výsledků zapisujte i získané body<br></li>
-            </ul>
-            <h5>Ostatní</h5>
-            <ul>
-                <li>Časy zápasů jsou veřejné, dejte vědět dopředu že budete hrát :)</li>
-                <li>Hraje se každý s každým. Vyhrává ten, kdo má nejvíc výher. Pokud bude něco nerozhodně, daní hráči si zahrají novou hru, kde se rozhodne o vítězství<br></li>
-            </ul>
+        <div class="col">
+            <form style="padding: 24px;margin: 2px;" method="post">
+            {% csrf_token %}
+            <input class="form-control" type="text" name="username" placeholder="Username" style="margin: 4px;"><input class="form-control" type="password1" placeholder="Password" name="password" style="margin: 4px;"><input class="form-control" type="password1" placeholder="Password confirmation" name="password2" style="margin: 4px;"><input class="form-control" type="email" name="email" style="margin: 4px;" placeholder="E-mail"><button class="btn btn-primary" type="submit" style="margin: 4px;">Registrovat!</button></form>
+        </div>
+        <div class="col">
+            <h5>Registrace</h5>
+            <p>Registrace týpečků.
+            {% if regwrong %}
+                <br>Tak hele, musíš tam zadat POŘÁDNÝ údaje!
+            {% else %}
+                <br>Doufám že to neporušuje GDPR nebo tak něco.
+            {% endif %}
+            </p>
         </div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>

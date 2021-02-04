@@ -19,47 +19,19 @@
                     <li class="nav-item"><a class="nav-link" href="{% url 'tournament:index' %}">Zápasy</a></li>
                     <li class="nav-item"><a class="nav-link" href="{% url 'tournament:rules' %}">Pravidla</a></li>
                     <li class="nav-item"></li>
-                </ul>
-
-                {% if !logged_user %}
-                    <span class="navbar-text actions"> <a class="login" href="#">Log In</a><a class="btn btn-light action-button" role="button" href="#">Sign Up</a></span>
-                {% else %}
-                    <span class="navbar-text actions"> <a class="login" href="#">User Panel</a><a class="login" href="{% url 'tournament:logout' %}">Log Out</a></span>
-                {% endif %}
-
+                </ul><span class="navbar-text actions"> <a class="login" href="#">Log In</a><a class="btn btn-info action-button" role="button" href="#">Sign Up</a></span>
             </div>
         </div>
     </nav>
     <div class="row" style="margin: 5%;background: rgba(255,255,255,0.25);">
-        <div class="col" style="filter: brightness(100%);margin: 0px;">
-            <h3 class="text-center">{{ player }}</h3>
-            <div class="row">
-                <div class="col">
-                    <div class="table-responsive">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th class="text-center">W</th>
-                                    <th class="text-center">L</th>
-                                    <th class="text-center">Points</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td class="text-center">{{ player.wins }}</td>
-                                    <td class="text-center">{{ player.looses }}<br></td>
-                                    <td class="text-center">{{ player.total_points }}<br></td>
-                                </tr>
-                                <tr></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                <div class="col">
-                    <h5>Info</h5>
-                    <p>{{ player.player_info }}</p>
-                </div>
-            </div>
+        <div class="col">
+            <form style="padding: 24px;margin: 2px;" method="post">
+            {% csrf_token %}
+            <input class="form-control" type="text" name="username" placeholder="Username" style="margin: 4px;"><input class="form-control" type="password" placeholder="Password" name="password" style="margin: 4px;"><button class="btn btn-primary" type="submit" style="margin: 4px;">Přihlásit se</button></form>
+        </div>
+        <div class="col">
+            <h5>Přihlášení</h5>
+            <p>Pokud jste zapomněli heslo, tak mi dejte echo a něják to vyřešíme haha</p>
         </div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
