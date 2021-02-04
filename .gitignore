@@ -4,3 +4,7 @@ duckgame/tournament/__pycache__/
 duckgame/tournament/__pycache__/*
 duckgame/tournament/migrations/
 duckgame/tournament/migrations/*
+duckgame/duckgame/__pycache__/
+duckgame/duckgame/__pycache__/*
+
+duckgame/db.sqlite3
