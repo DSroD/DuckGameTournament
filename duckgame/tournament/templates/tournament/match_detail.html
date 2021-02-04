@@ -32,7 +32,7 @@
     </nav>
     <div class="row" style="margin: 5%;background: rgba(255,255,255,0.25);">
         <div class="col" style="filter: brightness(100%);margin: 0px;">
-            <h3 class="text-center">{{ match }}</h3>
+            <h3 class="text-center">{{ match | safe }}</h3>
             <div class="row">
                 <div class="col">
                     <h5>Hráči</h5>
@@ -49,9 +49,9 @@
                 <div class="col">
                     {% if match.finished %}
                         <h5>Zápas byl ukončen</h5><br>
-                        <p> Vítěz:
+                        <p> <h5>Vítěz</h5>
                         {% for pl in match.winners.all %}
-                            <br> <a href="{% url 'tournament:player_detail' pl.id %}">{{ pl }}</a>
+                            <a href="{% url 'tournament:player_detail' pl.id %}"><span style="color:green; font-weight:bold;">{{ pl }}</span></a>
                         {% endfor %}
                             <br>
                             <br>

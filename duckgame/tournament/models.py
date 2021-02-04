@@ -21,5 +21,5 @@ class Match(models.Model):
     def __str__(self):
         if not self.finished:
             return " vs. ".join([player.name for player in self.players.all()])
-        return r'<span style="color:green;">{}</span> vs. <span style="color:red;">{}</span>'.format(" & ".join([player.name for player in self.winners.all()]), " & ".join([player.name for player in self.loosers.all()]))
+        return r'<span style="color:green; font-weight:bold;">{}</span> vs. <span style="color:red;">{}</span>'.format(" & ".join([player.name for player in self.winners.all()]), " & ".join([player.name for player in self.loosers.all()]))
 
