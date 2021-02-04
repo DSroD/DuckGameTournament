@@ -1,1 +1,6 @@
 /bootstrap
+duckgame/duckgame/settings.py
+duckgame/tournament/__pycache__/
+duckgame/tournament/__pycache__/*
+duckgame/tournament/migrations/
+duckgame/tournament/migrations/*
