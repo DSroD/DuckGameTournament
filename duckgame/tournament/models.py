@@ -13,8 +13,8 @@ class Match(models.Model):
     play_date = models.DateTimeField('match datetime')
     players = models.ManyToManyField(Player, related_name='matches')
     finished = models.BooleanField('finished', default=False)
-    winners = models.ManyToManyField(Player, related_name='won_matches')
-    loosers = models.ManyToManyField(Player, related_name='lost_matches')
+    winners = models.ManyToManyField(Player, related_name='won_matches', blank=True)
+    loosers = models.ManyToManyField(Player, related_name='lost_matches', blank=True)
     
     def __str__(self):
         return " vs. ".join([player.name for player in self.players.all()])
