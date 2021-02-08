@@ -13,8 +13,8 @@ from .profile_forms import GameAccountCreateForm, GameAccountProfileInfoUpdateFo
 # Create your views here.
 def index(request):
     islogged = request.user.is_authenticated
-    upcomming_matches = Match.objects.filter(finished=False).order_by("play_date")[:5]
-    recently_played = Match.objects.filter(finished=True).order_by("-play_date")[:5]
+    upcomming_matches = Match.objects.filter(finished=False).order_by("play_date")[:10]
+    recently_played = Match.objects.filter(finished=True).order_by("-play_date")[:10]
     context = {'upcomming_matches': upcomming_matches, 'recently_played': recently_played, 'logged_user': islogged}
     return render(request, 'tournament/index.html', context)
 
