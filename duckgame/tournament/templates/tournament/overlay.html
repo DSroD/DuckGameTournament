@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>Tournament</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Bitter:400,700">
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'tournament/styles.min.css' %}">
+</head>
+
+<body style="background: rgb(82,255,0);">
+    <footer class="d-block" style="background: url('{% static 'tournament/score_holder.png' %}') center / auto no-repeat;min-width: 100%;min-height: 270px;">
+        <div class="d-xl-flex justify-content-xl-center align-items-xl-center" style="height: 270px;width: 100%;">
+            <p class="text-monospace text-nowrap text-center text-info border rounded border-info shadow-lg justify-content-center align-items-center" style="padding: 7px;font-size: 22px;text-align: center;margin-bottom:4px;">
+                <b><span id="playerstring">TBD</span><br><span id="scorestring">TBD</span></b>
+            </p>
+        </div>
+    </footer>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.3/js/bootstrap.bundle.min.js"></script>
+    <script>   
+        $(document).ready(function() {
+            function updateDiv(){
+                $.ajax({
+                    url: "{% url 'tournament:overlay_update' match_id %}",
+                    dataType: "json",
+                    cache: false,
+                    success: function(data) {
+                        $('#playerstring').html(data.playerstring);
+                        $('#scorestring').html(data.scorestring);
+                    }             
+                });              
+            }
+            updateDiv();
+            setInterval(updateDiv, 2000);
+        });
+    </script>
+</body>
+
+</html>

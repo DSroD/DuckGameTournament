@@ -2,9 +2,9 @@ from django.shortcuts import render, redirect
 
 from django.contrib.auth import login, authenticate, logout
 
-from django.http import Http404
+from django.http import Http404, JsonResponse
 
-from .models import Match, Player
+from .models import Match, Player, PlayerInMatch
 
 from .regform import RegForm
 
@@ -96,3 +96,99 @@ def profile_view(request):
                 request.user.player.player_info = form.cleaned_data.get('profile_text')
                 request.user.player.save(update_fields=['player_info'])
     return render(request, 'tournament/profile.html')
+
+
+def overlay(request, match_id):
+    try:
+        match = Match.objects.get(pk=match_id)
+    except Match.DoesNotExist:
+        raise Http404('Match does not exists')
+    return render(request, 'tournament/overlay.html', {'match_id': match_id})
+
+
+def overlay_update_data(request, match_id):
+    try:
+        match = Match.objects.get(pk=match_id)
+    except Match.DoesNotExist:
+        return JsonResponse({'error': 'Match does not exist'})
+    match_players = PlayerInMatch.objects.filter(match=match).all()
+    plnames = " vs. ".join([pl.player.name for pl in match_players])
+    plscore = " : ".join([str(pl.score) for pl in match_players])
+    return JsonResponse({'playerstring' : plnames, 'scorestring' : plscore})
+
+
+def update_view(request, match_id):
+    try:
+        match = Match.objects.get(pk=match_id)
+    except Match.DoesNotExist:
+        raise Http404('Match does not exists')
+    pim = PlayerInMatch.objects.filter(match=match).all()
+    plscore = " : ".join([str(pl.score) for pl in pim])
+    return render(request, 'tournament/update.html', {'match' : match, 'score' : plscore})
+
+
+def update_view_addp(request, match_id, pl_id):
+    msg_obj = {'top_message' : 'Point added!'}
+    try:
+        match = Match.objects.get(pk=match_id)
+    except Match.DoesNotExist:
+        raise Http404('Match does not exists')
+
+    player = Player.objects.get(pk=pl_id)
+    player.total_points += 1
+    player.save()
+    pp = PlayerInMatch.objects.get(match=match, player=player)
+    pp.score += 1
+    pp.save()
+    pim = PlayerInMatch.objects.filter(match=match).all()
+    plscore = " : ".join([str(pl.score) for pl in pim])
+    return render(request, 'tournament/update.html', {'match' : match, 'score' : plscore, 'msg_obj' : msg_obj})
+
+
+def update_view_rmp(request, match_id, pl_id):
+    msg_obj = {'top_message' : 'Point removed!'}
+    try:
+        match = Match.objects.get(pk=match_id)
+    except Match.DoesNotExist:
+        raise Http404('Match does not exists')
+
+    player = Player.objects.get(pk=pl_id)
+    player.total_points -= 1
+    player.save()
+    pp = PlayerInMatch.objects.get(match=match, player=player)
+    pp.score -= 1
+    pp.save()
+    pim = PlayerInMatch.objects.filter(match=match).all()
+    plscore = " : ".join([str(pl.score) for pl in pim])
+    return render(request, 'tournament/update.html', {'match' : match, 'score' : plscore, 'msg_obj' : msg_obj})
+
+
+def update_view_winp(request, match_id, pl_id):
+    msg_obj = {'top_message' : 'Winner set!'}
+    try:
+        match = Match.objects.get(pk=match_id)
+    except Match.DoesNotExist:
+        raise Http404('Match does not exists')
+
+    pim = PlayerInMatch.objects.filter(match=match).all()
+    plscore = " : ".join([str(pl.score) for pl in pim])
+    match.finished = True
+    match.winners.add(Player.objects.get(pk=pl_id))
+    match.save()
+    return render(request, 'tournament/update.html', {'match' : match, 'score' : plscore, 'msg_obj' : msg_obj})
+
+
+def update_view_loosep(request, match_id, pl_id):
+    msg_obj = {'top_message' : 'Looser set!'}
+    try:
+        match = Match.objects.get(pk=match_id)
+    except Match.DoesNotExist:
+        raise Http404('Match does not exists')
+
+    pim = PlayerInMatch.objects.filter(match=match).all()
+    plscore = " : ".join([str(pl.score) for pl in pim])
+    match.finished = True
+    match.loosers.add(Player.objects.get(pk=pl_id))
+    match.save()
+    return render(request, 'tournament/update.html', {'match' : match, 'score' : plscore, 'msg_obj' : msg_obj})
+

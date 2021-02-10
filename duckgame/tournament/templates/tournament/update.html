@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>Tournament</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Bitter:400,700">
+    <link rel="stylesheet" href="assets/css/styles.min.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <p>{{ match | safe }}</p><br>
+                <p>{{ score }}</p><br><br>
+                {% if msg_obj.top_message %}
+
+                {% endif %}
+                {% if match.players.all %}
+                    {% for p in match.players.all %}
+                        <div class="row">
+                            <div class="col"><a class="btn btn-primary" role="button" style="margin: 4px; margin-bottom: 16px;" href="{% url 'tournament:update_addp' match.id p.id %}">{{ p.name }} add point</a><a class="btn btn-primary" role="button" style="margin: 4px; margin-bottom: 16px;" href="{% url 'tournament:update_rmp' match.id p.id %}">{{ p.name }} remove point</a><a class="btn btn-primary" role="button" style="margin: 4px; margin-bottom: 16px;" href="{% url 'tournament:update_win' match.id p.id %}">{{ p.name }} win</a><a class="btn btn-primary" role="button" style="margin: 4px; margin-bottom: 16px;" href="{% url 'tournament:update_loose' match.id p.id %}">{{ p.name }} loose</a></div>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+                <div class="row">
+                    <div class="col">
+                        <a class="btn btn-primary" role="button" style="margin: 4px;" href="{% url 'tournament:index' %}">{{ p.name }} Home</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.3/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

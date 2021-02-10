@@ -61,11 +61,14 @@
                         <h5>Zápas ještě nebyl ukončen</h5><br>
                         <p>Plánovaný start<br>{{ match.play_date }}</p>
                     {% endif %}
-                </div>
-            </div>
-        </div>
-    </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+                    {% if request.user.is_staff %}
+                        <br>
+                        <a href="{% url 'tournament:overlay' match.id %}">Stream overlay</a>
+                        <br>
+                        <a href="{% url 'tournament:update' match.id %}">Update menu</a>
+                    {% endif %}
+                    {% if request.user.is_staff %}
+               <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.3/js/bootstrap.bundle.min.js"></script>
 </body>
 
