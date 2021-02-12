@@ -15,20 +15,20 @@
         <div class="row">
             <div class="col">
                 <p>{{ match | safe }}</p><br>
-                <p>{{ score }}</p><br><br>
+                <p>{{ score }}</p>
                 {% if msg_obj.top_message %}
-
+                    <div id="message">{{ msg_obj.top_message }}<br></div>
                 {% endif %}
                 {% if match.players.all %}
                     {% for p in match.players.all %}
-                        <div class="row">
-                            <div class="col"><a class="btn btn-primary" role="button" style="margin: 4px; margin-bottom: 16px;" href="{% url 'tournament:update_addp' match.id p.id %}">{{ p.name }} add point</a><a class="btn btn-primary" role="button" style="margin: 4px; margin-bottom: 16px;" href="{% url 'tournament:update_rmp' match.id p.id %}">{{ p.name }} remove point</a><a class="btn btn-primary" role="button" style="margin: 4px; margin-bottom: 16px;" href="{% url 'tournament:update_win' match.id p.id %}">{{ p.name }} win</a><a class="btn btn-primary" role="button" style="margin: 4px; margin-bottom: 16px;" href="{% url 'tournament:update_loose' match.id p.id %}">{{ p.name }} loose</a></div>
+                        <div class="row" style="margin-bottom: 24px;">
+                            <div class="col"><a class="btn btn-primary" role="button" style="margin: 4px;" href="{% url 'tournament:update_addp' match.id p.id %}">{{ p.name }} add point</a><a class="btn btn-primary" role="button" style="margin: 4px;" href="{% url 'tournament:update_rmp' match.id p.id %}">{{ p.name }} remove point</a><a class="btn btn-success" role="button" style="margin: 4px;" href="{% url 'tournament:update_win' match.id p.id %}">{{ p.name }} win</a><a class="btn btn-danger" role="button" style="margin: 4px;" href="{% url 'tournament:update_loose' match.id p.id %}">{{ p.name }} loose</a></div>
                         </div>
                     {% endfor %}
                 {% endif %}
                 <div class="row">
                     <div class="col">
-                        <a class="btn btn-primary" role="button" style="margin: 4px;" href="{% url 'tournament:index' %}">{{ p.name }} Home</a>
+                        <a class="btn btn-secondary" role="button" style="margin: 4px;" href="{% url 'tournament:index' %}">{{ p.name }} Home</a>
                     </div>
                 </div>
             </div>
@@ -36,6 +36,11 @@
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.3/js/bootstrap.bundle.min.js"></script>
+    <script>
+    $(document).ready(function() {
+            $("#message").fadeTo(000, 0.1);    
+        });
+    </script>
 </body>
 
 </html>
