@@ -64,11 +64,11 @@
                     {% endif %}
                     {% if request.user.is_staff or request.user.player == match.registrator %}
                         <br>
-                        <a class="btn btn-primary action-button" role="button" href="{% url 'tournament:overlay' match.id %}">Stream overlay</a>
+                        <a class="btn btn-primary action-button" role="button" style="margin:6px;" href="{% url 'tournament:overlay' match.id %}">Stream overlay</a>
                         <br>
-                        <a class="btn btn-primary action-button" role="button" href="{% url 'tournament:update' match.id %}">Update menu</a>
+                        <a class="btn btn-primary action-button" role="button" style="margin:6px;" href="{% url 'tournament:update' match.id %}">Update menu</a>
                         <br>
-                        <a class="btn btn-danger action-button" role="button" href="{% url 'tournament:delete_match' match.id %}">Delete match</a>
+                        <a class="btn btn-danger action-button" role="button" style="margin:6px;" href="{% url 'tournament:delete_match' match.id %}">Delete match</a>
                     {% endif %}
                 </div>
             </div>
