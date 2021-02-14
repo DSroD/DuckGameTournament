@@ -151,11 +151,12 @@ def match_invite_view(request, inv_id):
             invite.delete()
             return redirect('tournament:profile')
 
-    else:
+    if (invite.creator != request.user.player)
         try:
             player_invite = PlayerInvitation.objects.get(match_inv=invite, invited_player=request.user.player)
         except PlayerInvitation.DoesNotExist:
-            raise Http404('You are not invited')
+            if not request.user.is_staff:
+                raise Http404('You are not invited')
 
     if (request.POST.get('action') == 'accept_inv') and player_invite != None:
         player_invite.accepted = True
