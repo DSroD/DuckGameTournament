@@ -10,6 +10,7 @@ urlpatterns = [
     path('matches/<int:match_id>/', views.detail, name='match_detail'),
     path('players/<int:player_id>/', views.player, name='player_detail'),
     path('invites/<int:inv_id>/', views.match_invite_view, name='match_invite_detail'),
+    path('matches/delete/<int:match_id>/') views.delete_match, name="delete_match"),
     path('register/', views.register, name='register'),
     path('login/', views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),

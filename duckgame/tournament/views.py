@@ -28,6 +28,19 @@ def detail(request, match_id):
     return render(request, 'tournament/match_detail.html', {'match': match})
 
 
+def delete_match(request, match_id):
+    try:
+        match = Match.objects.get(pk=match_id)
+    except Match.DoesNotExist:
+        raise Http404('Match does not exists')
+    if request.user.is_staff or match.registrator == request.user.player:
+        match.delete()
+        
+    return redirect('tournament:index')
+
+    
+
+
 def rules(request):
     return render(request, 'tournament/rules.html')
 

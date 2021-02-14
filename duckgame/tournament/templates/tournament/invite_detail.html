@@ -33,6 +33,7 @@
     <div class="row" style="margin: 5%;background: rgba(255,255,255,0.25);">
         <div class="col" style="filter: brightness(100%);margin: 0px;">
             <h3 class="text-center">{{ invite }}</h3>
+            <h4 class="text-center">{{ invite.play_date|date:'M. d, Y' }}, {{ invite.play_date|time:'P' }}</h4>
             <div class="row" style="margin-bottom:40px;">
                 {% if request.user.player in invite.invited.all or request.user.player == invite.creator %}
                     <div class="col">
@@ -52,6 +53,9 @@
                         </p>
                     </div>
                     <div class="col">
+                        {% if invite.auto_create%}
+                            <p>Pokud všichni hráči příjmou pozvánku, hra se vytvoří automaticky</p>
+                        {% endif %}
                         {% if player_invite.accepted %}
                             <form method="post">
                                 {% csrf_token %}
