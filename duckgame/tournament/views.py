@@ -151,7 +151,7 @@ def match_invite_view(request, inv_id):
             invite.delete()
             return redirect('tournament:profile')
 
-    if (invite.creator != request.user.player)
+    if (invite.creator != request.user.player):
         try:
             player_invite = PlayerInvitation.objects.get(match_inv=invite, invited_player=request.user.player)
         except PlayerInvitation.DoesNotExist:
