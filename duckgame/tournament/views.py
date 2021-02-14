@@ -35,7 +35,7 @@ def delete_match(request, match_id):
         raise Http404('Match does not exists')
     if request.user.is_staff or match.registrator == request.user.player:
         match.delete()
-        
+
     return redirect('tournament:index')
 
     
@@ -157,7 +157,7 @@ def match_invite_view(request, inv_id):
         except PlayerInvitation.DoesNotExist:
             raise Http404('You are not invited')
 
-    if (request.POST.get('action') == 'accept_inv') and player_invite:
+    if (request.POST.get('action') == 'accept_inv') and player_invite != None:
         player_invite.accepted = True
         player_invite.save()
 
