@@ -15,7 +15,7 @@ class GameAccountProfileInfoUpdateForm(forms.Form):
 
 class CreateGameForm(forms.Form):
     date = forms.DateTimeField(required=True, input_formats=['%d/%m/%Y %H:%M'])
-    reg_as_player = forms.BooleanField(label="Register as player", required=False)
+    reg_as_player = forms.BooleanField(label="I will participate in the match", required=False)
     auto_create = forms.BooleanField(label="Automatically create game when all players accept invitation", required=False)
 
     def __init__(self, *args, **kwargs):
