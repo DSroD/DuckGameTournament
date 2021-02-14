@@ -2,20 +2,21 @@ from django.shortcuts import render, redirect
 
 from django.contrib.auth import login, authenticate, logout
 
+from django.contrib.auth.models import User
+
 from django.http import Http404, JsonResponse
 
-from .models import Match, Player, PlayerInMatch
+from .models import Match, Player, PlayerInMatch, MatchInvitation, PlayerInvitation
 
 from .regform import RegForm
 
-from .profile_forms import GameAccountCreateForm, GameAccountProfileInfoUpdateForm
+from .profile_forms import GameAccountCreateForm, GameAccountProfileInfoUpdateForm, CreateGameForm
 
 # Create your views here.
 def index(request):
-    islogged = request.user.is_authenticated
     upcomming_matches = Match.objects.filter(finished=False).order_by("play_date")[:10]
     recently_played = Match.objects.filter(finished=True).order_by("-play_date")[:10]
-    context = {'upcomming_matches': upcomming_matches, 'recently_played': recently_played, 'logged_user': islogged}
+    context = {'upcomming_matches': upcomming_matches, 'recently_played': recently_played}
     return render(request, 'tournament/index.html', context)
 
 
@@ -24,13 +25,11 @@ def detail(request, match_id):
         match = Match.objects.get(pk=match_id)
     except Match.DoesNotExist:
         raise Http404('Match does not exists')
-    islogged = request.user.is_authenticated
-    return render(request, 'tournament/match_detail.html', {'match': match, 'logged_user': islogged})
+    return render(request, 'tournament/match_detail.html', {'match': match})
 
 
 def rules(request):
-    islogged = request.user.is_authenticated
-    return render(request, 'tournament/rules.html', {'logged_user': islogged})
+    return render(request, 'tournament/rules.html')
 
 
 def player(request, player_id):
@@ -38,8 +37,7 @@ def player(request, player_id):
         player = Player.objects.get(pk=player_id)
     except Player.DoesNotExist:
         raise Http404('Player does not exists')
-    islogged = request.user.is_authenticated
-    return render(request, 'tournament/player_detail.html', {'player': player, 'logged_user': islogged})
+    return render(request, 'tournament/player_detail.html', {'player': player})
 
 
 def register(request):
@@ -83,6 +81,20 @@ def logout_view(request):
 def profile_view(request):
     if(not request.user.is_authenticated):
         return redirect('tournament:login')
+
+    gmform = CreateGameForm(user=request.user)
+
+    try:
+        invites = PlayerInvitation.objects.filter(invited_player=request.user.player).order_by("match_inv__play_date")
+        my_games = MatchInvitation.objects.filter(creator=request.user.player).order_by("play_date")
+        upcomming_matches = Match.objects.filter(finished=False, players=request.user.player).order_by("play_date")[:10]
+        recently_played = Match.objects.filter(finished=True, players=request.user.player).order_by("-play_date")[:10]
+    except User.player.RelatedObjectDoesNotExist:
+        invites = None
+        my_games = None
+        upcomming_matches = None
+        recently_played = None
+
     if request.method == 'POST':
         if request.POST.get('game_nick', '') != '' and not hasattr(request.user, 'player'):
             form = GameAccountCreateForm(request.POST)
@@ -95,8 +107,67 @@ def profile_view(request):
             if form.is_valid():
                 request.user.player.player_info = form.cleaned_data.get('profile_text')
                 request.user.player.save(update_fields=['player_info'])
-    return render(request, 'tournament/profile.html')
+        if request.POST.get('players'):
+            gmform = CreateGameForm(request.POST, user=request.user)
+            if gmform.is_valid():
+                invited_players = gmform.cleaned_data.get('players')
+                date = gmform.cleaned_data.get('date')
+                reg_as_player = gmform.cleaned_data.get('reg_as_player')
+                auto_create = gmform.cleaned_data.get('auto_create')
+                # Create new match
+                new_inv = MatchInvitation(play_date=date, creator=Player.objects.get(user=request.user), creator_is_player=reg_as_player, auto_create=auto_create)
+                new_inv.save()
+                for pl in invited_players:
+                    p = PlayerInvitation(match_inv=new_inv, invited_player=pl)
+                    p.save()
+    return render(request, 'tournament/profile.html', {'form' : gmform, 'invites' : invites, 'my_games': my_games, 'upcomming_matches' : upcomming_matches, 'recently_played' : recently_played})
 
+
+def match_invite_view(request, inv_id):
+    can_create = None
+    try:
+        invite = MatchInvitation.objects.get(pk=inv_id)
+    except MatchInvitation.DoesNotExist:
+        raise Http404('Invite does not exist')
+
+    if invite.creator == request.user.player or request.user.is_staff:
+        player_invite = None
+        if len(invite.player_invitations.filter(accepted=False)) == 0:
+            can_create = True
+        if request.POST.get('action') == 'delete':
+            invite.delete()
+            return redirect('tournament:profile')
+
+    else:
+        try:
+            player_invite = PlayerInvitation.objects.get(match_inv=invite, invited_player=request.user.player)
+        except PlayerInvitation.DoesNotExist:
+            raise Http404('You are not invited')
+
+    if request.POST.get('action') == 'accept_inv':
+        player_invite.accepted = True
+        player_invite.save()
+
+    if invite.auto_create or (request.POST.get('action') == 'create' and (invite.creator == request.user.player or request.user.is_staff)):
+            if len(invite.player_invitations.filter(accepted=False)) == 0:
+                # create game
+                new_match = Match(registrator=invite.creator, play_date=invite.play_date)
+                new_match.save()
+                for inv in invite.player_invitations.all():
+                    new_pl = PlayerInMatch(player=inv.invited_player, match=new_match)
+                    new_pl.save()
+                if invite.creator_is_player:
+                    new_pl = PlayerInMatch(player=invite.creator, match=new_match)
+                    new_pl.save()
+
+                invite.delete()
+                return redirect('tournament:profile')
+
+    elif request.POST.get('action') == 'cancel_inv':
+        player_invite.accepted = False
+        player_invite.save()
+    
+    return render(request, 'tournament/invite_detail.html', {'invite' : invite, 'player_invite' : player_invite, 'can_create' : can_create})
 
 def overlay(request, match_id):
     try:
@@ -192,3 +263,6 @@ def update_view_loosep(request, match_id, pl_id):
     match.save()
     return render(request, 'tournament/update.html', {'match' : match, 'score' : plscore, 'msg_obj' : msg_obj})
 
+
+def invite_view(request, invite_id):
+    pass

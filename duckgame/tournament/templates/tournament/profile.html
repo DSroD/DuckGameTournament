@@ -7,8 +7,10 @@
     <title>Tournament</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.3/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Bitter:400,700">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css"/>
     {% load static %}
     <link rel="stylesheet" type="text/css" href="{% static 'tournament/styles.min.css' %}">
+    {% load bootstrap %}
 </head>
 
 <body style="background: linear-gradient(rgb(255,162,162) 0%, white); background-repeat: no-repeat; background-attachment: fixed;">
@@ -33,33 +35,133 @@
     </nav>
     <div class="row" style="margin: 5%;background: rgba(255,255,255,0.25);">
         <div class="col" style="filter: brightness(100%);margin: 0px;">
-            <div class="row">
-                <div class="col">
-                    <h5>Duck game account</h5>
-                    {% if not request.user.player %}
-                    <div>
-                        <p>K vašemu účtu není připojen žádný duck game account, vytvořte si jej prosím<br></p>
-                        <form class="d-inline-flex flex-grow-0" style="margin: 4px;" method="post">
-                            {% csrf_token %}
-                            <input class="form-control" type="text" name="game_nick" placeholder="Herní nick" required="" minlength="4" maxlength="16" style="margin: 4px;"><button class="btn btn-primary" type="submit" style="margin: 4px;">Vytvořit</button>
-                        </form>
-                    </div>
-                    {% else %}
-                        <div>
-                        <p>K vašemu účtu je připojený účet {{ request.user.player }}</p>
-                        <h6>Player info</h6>
-                            <form style="margin: 4px;" method="post">
-                                {% csrf_token %}
-                                <textarea class="form-control" style="margin: 4px;" name="profile_text">{{ request.user.player.player_info }}</textarea><button class="btn btn-primary" type="submit" style="margin: 4px;">Aktualizovat</button>
-                            </form>
-                        </div>
-                    {% endif %}
-                </div>
+            <h5>Duck game account</h5>
+            {% if not request.user.player %}
+            <div>
+                <p>K vašemu účtu není připojen žádný duck game account, vytvořte si jej prosím<br></p>
+                <form class="d-inline-flex flex-grow-0" style="margin: 4px;" method="post">
+                    {% csrf_token %}
+                    <input class="form-control" type="text" name="game_nick" placeholder="Herní nick" required="" minlength="4" maxlength="16" style="margin: 4px;"><button class="btn btn-primary" type="submit" style="margin: 4px;">Vytvořit</button>
+                </form>
             </div>
+            {% else %}
+                <div style="margin-bottom:30px;">
+                <p>K vašemu účtu je připojený účet {{ request.user.player }}</p>
+                <h5>Player info</h5>
+                    <form style="margin: 4px;" method="post">
+                        {% csrf_token %}
+                        <textarea class="form-control" style="margin: 4px;" name="profile_text">{{ request.user.player.player_info }}</textarea><button class="btn btn-primary" type="submit" style="margin: 4px;">Aktualizovat</button>
+                    </form>
+                </div>
+
+                <div style="margin-bottom: 30px;" class="row">
+                    <div class="col" style="filter: brightness(100%);margin: 0px;">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center" style="font-size: 18px;">Následující zápasy</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% if upcomming_matches %}
+                                        {% for match in upcomming_matches %}
+                                            <tr>
+                                                <td class="text-center"><a class="text-info" style="font-size: 18px;" href="{% url 'tournament:match_detail' match.id %}">{{ match }}</a></td>
+                                            </tr>
+                                        {% endfor %}
+                                    {% else %}
+                                        <tr>
+                                            <td class="text-center" style="font-size: 18px; color: rgb(174,65,65);">Nejsou naplánovány žádné zápasy</td>
+                                        </tr>
+                                    {% endif %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center">Odehrané zápasy</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% if recently_played %}
+                                        {% for match in recently_played %}
+                                            <tr>
+                                                <td class="text-center"><a class="text-info" style="font-size: 18px;" href="{% url 'tournament:match_detail' match.id %}">{{ match | safe }}</a></td>
+                                            </tr>
+                                        {% endfor %}
+                                    {% else %}
+                                        <tr>
+                                            <td class="text-center" style="font-size: 18px; color: rgb(174,65,65);">Zatím nebyly odehrány žádné zápasy</td>
+                                        </tr>
+                                    {% endif %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div style="margin-bottom: 30px;">
+                    <h5>Match invites</h5>
+                    {% if invites %}
+                        {% for inv in invites %}
+                            <span {% if inv.accepted %}style="color: green;"{% endif %}>
+                                <a href="{% url 'tournament:match_invite_detail' inv.match_inv.id %}"> {{inv}}, {{ inv.match_inv.play_date|date:'M. d, Y' }}, {{ inv.match_inv.play_date|time:'P' }}</a><br>
+                            </span>
+                        {% endfor %}
+                    {% else %}
+                        <p style="color: var(--danger);">Žádné pozvánky</p>
+                    {% endif %}
+
+                </div>
+
+                {% if perms.tournament.can_create_games %}
+
+                    <div style="margin-bottom: 30px;">
+                        <h5>Moje vytvořené pozvánky</h5>
+                        {% if my_games %}
+                            {% for game in my_games %}
+                                <a href="{% url 'tournament:match_invite_detail' game.id %}">{{ game }}, {{ game.play_date|date:'M. d, Y' }}, {{ game.play_date|time:'P' }}</a><br>
+                            {% endfor %}
+                        {% else %}
+                            <p style="color: var(--danger);">Zatím nebyla vytvořená žádná pozvánka</p>
+                        {% endif %}
+
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <h5>Create match</h5>
+
+                        <form method="post" stype="margin: 4px;">
+                            {{ form|bootstrap }}
+                            {% csrf_token %}
+                             <div class="form-group">
+                                <input type="submit" value="Create match" class="btn btn-primary" />
+                            </div>
+                        </form>
+
+                    </div>
+                    
+                {% endif %}
+            {% endif %}
         </div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.3/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js"></script>
+    {% if perms.tournament.can_create_games and request.user.player %}
+        <script>
+            $(function () {
+                $("#id_date").datetimepicker({
+                    format: 'd/m/Y H:i',
+                });
+            });
+        </script>
+    {% endif %}
+    
 </body>
 
 </html>

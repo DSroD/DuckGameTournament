@@ -21,7 +21,7 @@
                     <li class="nav-item"></li>
                 </ul>
 
-                {% if not logged_user %}
+                {% if not request.user.is_authenticated %}
                     <span class="navbar-text actions"> <a class="login" href="{% url 'tournament:login' %}">Log In</a><a class="btn btn-light action-button" role="button" href="{% url 'tournament:register' %}">Sign Up</a></span>
                 {% else %}
                     <span class="navbar-text actions"> <a class="login" href="{% url 'tournament:profile' %}">User Panel</a><a class="login" href="{% url 'tournament:logout' %}">Log Out</a></span>
