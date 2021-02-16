@@ -14,7 +14,7 @@ class GameAccountProfileInfoUpdateForm(forms.Form):
     profile_text = forms.CharField(min_length=0, max_length=2000)
 
 class CreateGameForm(forms.Form):
-    date = forms.DateTimeField(required=True, input_formats=['%d/%m/%Y %H:%M'])
+    date = forms.DateTimeField(required=True, input_formats=['%d/%m/%Y %H:%M'], )
     reg_as_player = forms.BooleanField(label="I will participate in the match", required=False)
     auto_create = forms.BooleanField(label="Automatically create game when all players accept invitation", required=False)
 
@@ -22,3 +22,4 @@ class CreateGameForm(forms.Form):
          self.user = kwargs.pop('user', None)
          super(CreateGameForm, self).__init__(*args, **kwargs)
          self.fields['players'] = forms.ModelMultipleChoiceField(label="Invited players", queryset=Player.objects.filter(~Q(user=self.user)), widget=forms.SelectMultiple, required=True)
+         self.fields['date'].widget.attrs.update({'autocomplete' : 'off'})
